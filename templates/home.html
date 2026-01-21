@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Drive - {{ usuario.usuario }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>HOMELAB DRIVE</h1>
+        <a href="{{ url_for('user.perfil') }}" class="icone-perfil">
+            {% if usuario.imagem_perfil and usuario.imagem_perfil != 'default.png' %}
+                <img src="{{ url_for('static', filename='uploads/' + usuario.imagem_perfil) }}" alt="Foto de perfil">
+            {% else %}
+                <img src="{{ url_for('static', filename='image/_Pngtree_outline_user_icon_5045523-removebg-preview (1).png') }}" alt="Foto padrão">
+            {% endif %}
+        </a>
+    </nav>
+    
+    <div class="drive-container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">🏠 Início</a>
+            {% for crumb in breadcrumb %}
+                <span> / </span>
+                <a href="{{ url_for('home', folder_path=crumb.path) }}">{{ crumb.name }}</a>
+            {% endfor %}
+        </div>
+        
+        <!-- Ações -->
+        <div class="actions-section">
+            <div class="upload-section">
+                <h3>📁 Enviar Arquivo</h3>
+                <form method="POST" enctype="multipart/form-data" class="upload-form">
+                    <input type="hidden" name="action" value="upload_file">
+                    <input type="file" name="file" required accept="*/*">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+            
+            <div class="folder-section">
+                <h3>📂 Nova Pasta</h3>
+                <form method="POST" class="folder-form">
+                    <input type="hidden" name="action" value="create_folder">
+                    <input type="text" name="folder_name" placeholder="Nome da pasta" required maxlength="50">
+                    <button type="submit" class="btn btn-secondary">Criar</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Conteúdo -->
+        <div class="content-section">
+            {% if folders or files %}
+                <div class="items-grid">
+                    <!-- Pastas -->
+                    {% for folder in folders %}
+                        <div class="item-card folder-card">
+                            <div class="item-icon">📁</div>
+                            <div class="item-info">
+                                <h3><a href="{{ url_for('home', folder_path=folder.folder_path) }}">{{ folder.folder_name }}</a></h3>
+                                <p>📅 {{ folder.created_date.strftime('%d/%m/%Y %H:%M') }}</p>
+                            </div>
+                            <div class="item-actions">
+                                <a href="{{ url_for('home', folder_path=folder.folder_path) }}" class="btn btn-primary btn-small">Abrir</a>
+                                <a href="{{ url_for('delete_folder', folder_id=folder.id) }}" class="btn btn-danger btn-small" onclick="return confirm('Deletar pasta e todo conteúdo?')">Deletar</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <!-- Arquivos -->
+                    {% for file in files %}
+                        <div class="item-card file-card">
+                            <div class="item-icon">
+                                {% if file.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
+                                    <img src="{{ url_for('preview_file', file_id=file.id) }}" alt="Preview" class="file-preview">
+                                {% elif file.file_type in ['pdf'] %}
+                                    📄
+                                {% elif file.file_type in ['doc', 'docx'] %}
+                                    📄
+                                {% elif file.file_type in ['mp4', 'avi', 'mov'] %}
+                                    🎥
+                                {% elif file.file_type in ['mp3', 'wav'] %}
+                                    🎧
+                                {% elif file.file_type in ['zip', 'rar'] %}
+                                    🗜️
+                                {% else %}
+                                    📁
+                                {% endif %}
+                            </div>
+                            <div class="item-info">
+                                <h3>{{ file.original_filename }}</h3>
+                                <p>💾 {{ "%.1f"|format(file.file_size / 1024 / 1024) }} MB</p>
+                                <p>📅 {{ file.upload_date.strftime('%d/%m/%Y %H:%M') }}</p>
+                            </div>
+                            <div class="item-actions">
+                                {% if file.file_type in ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'txt'] %}
+                                    <a href="{{ url_for('preview_file', file_id=file.id) }}" class="btn btn-info btn-small" target="_blank">Preview</a>
+                                {% endif %}
+                                <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn btn-primary btn-small">Download</a>
+                                <a href="{{ url_for('delete_file', file_id=file.id) }}" class="btn btn-danger btn-small" onclick="return confirm('Deletar arquivo?')">Deletar</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-items">
+                    <p>📂 Pasta vazia</p>
+                    <p>Crie uma pasta ou faça upload de arquivos!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - {{ usuario.usuario }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>HOMELAB IWR</h1>
+        <a href="{{ url_for('home') }}" class="btn-home">Home</a>
+    </nav>
+    
+    <div class="perfil-container">
+        <div class="perfil-card">
+            <div class="perfil-header">
+                <div class="perfil-imagem">
+                    {% if usuario.imagem_perfil and usuario.imagem_perfil != 'default.png' %}
+                        <img src="{{ url_for('static', filename='uploads/' + usuario.imagem_perfil) }}" alt="Foto de perfil">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='image/_Pngtree_outline_user_icon_5045523-removebg-preview (1).png') }}" alt="Foto padrão">
+                    {% endif %}
+                </div>
+                <h2>{{ usuario.usuario }}</h2>
+            </div>
+            
+            <div class="perfil-actions">
+                <a href="{{ url_for('user.editar_perfil') }}" class="btn btn-primary">Editar Perfil</a>
+                <a href="{{ url_for('user.logout') }}" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja sair?')">Sair</a>
+            </div>
+        </div>
+    </div>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

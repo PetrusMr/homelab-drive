@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+
+<div class="auth-container">
+
+    <!-- BOTÕES TOPO -->
+    <div class="auth-tabs">
+        <button id="btn-login" class="active">Login</button>
+        <button id="btn-register">Register</button>
+    </div>
+
+    <!-- SLIDER -->
+    <div class="slider">
+        <div class="forms">
+
+            <!-- LOGIN -->
+            <form class="form login-form" method="POST">
+                <input type="hidden" name="action" value="login">
+                        
+                <h1 class="Titulo">Login</h1>
+                        
+                <div class="field">
+                    <label>Usuário</label>
+                    <input type="text" name="usuario" required>
+                </div>
+            
+                <div class="field password-wrapper">
+                    <label>Senha</label>
+                    <input type="password" name="senha" required>
+                    <button type="button" class="toggle-password">👁</button>
+                </div>
+            
+                <button type="submit">Entrar</button>
+            </form>
+            
+            <!-- REGISTER -->
+            <form class="form register-form" method="POST">
+                <input type="hidden" name="action" value="register">
+            
+                <h1 class="Titulo">Register</h1>
+            
+                <div class="field">
+                    <label>Usuário</label>
+                    <input type="text" name="usuario" required>
+                </div>
+            
+                <div class="field">
+                    <label>Senha</label>
+                    <input type="password" name="senha" required>
+                </div>
+            
+                <button type="submit">Registrar</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
